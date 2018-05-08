@@ -9,4 +9,5 @@ DateSelector 1.0 DateSelector.qml
 TimeSelector 1.0 TimeSelector.qml
 TitleBar 1.0 TitleBar.qml
 TitleBarButton 1.0 TitleBarButton.qml
+WindowControls 1.0 WindowControls.qml
 YearSelector 1.0 YearSelector.qml

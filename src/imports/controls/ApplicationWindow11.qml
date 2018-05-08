@@ -22,8 +22,8 @@ import Fluid.Controls.Private 1.0 as FluidControlsPrivate
 ApplicationWindow {
     id: window
 
+    property alias decorationType: appBar.decorationType
     property alias decorationColor: windowDecoration.color
-
     property alias decorationTheme: windowDecoration.theme
 
     property alias appBar: appBar

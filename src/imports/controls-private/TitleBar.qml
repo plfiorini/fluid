@@ -23,6 +23,10 @@ ToolBar {
 
     property alias title: titleLabel.text
 
+    signal minimizeRequested()
+    signal maximizeRequested()
+    signal closeRequested()
+
     leftPadding: 8
     rightPadding: 8
 
@@ -66,25 +70,18 @@ ToolBar {
 
             FluidControlsPrivate.TitleBarButton {
                 name: "window-minimize"
-                onClicked: window.showMinimized()
+                onClicked: titleBar.minimizeRequested()
             }
 
             FluidControlsPrivate.TitleBarButton {
                 name: window.visibility === Window.Maximized ? "window-restore" : "window-maximize"
-                onClicked: toggleMaximized()
+                onClicked: titleBar.maximizeRequested()
             }
 
             FluidControlsPrivate.TitleBarButton {
                 name: "window-close"
-                onClicked: window.close()
+                onClicked: titleBar.closeRequested()
             }
         }
-    }
-
-    function toggleMaximized() {
-        if (window.visibility === Window.Maximized)
-            window.showNormal();
-        else
-            window.showMaximized();
     }
 }

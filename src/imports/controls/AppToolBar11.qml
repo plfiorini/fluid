@@ -14,6 +14,7 @@
  */
 
 import QtQuick 2.10
+import QtQuick.Window 2.3
 import QtQuick.Controls 2.3
 import QtQuick.Controls.Material 2.3
 import Fluid.Controls 1.1 as FluidControls
@@ -25,6 +26,12 @@ ToolBar {
     Material.elevation: page ? page.appBar.elevation : 2
     Material.background: page ? page.appBar.backgroundColor : toolbar.Material.primaryColor
     Material.theme: FluidControls.Color.isDarkColor(page ? page.appBar.backgroundColor : toolbar.Material.background) ? Material.Dark : Material.Light
+
+    enum Decoration {
+        System,
+        TitleBar,
+        HeaderBar
+    }
 
     property Page page
 
@@ -43,6 +50,8 @@ ToolBar {
 
         return height;
     }
+
+    property int decorationType: FluidControls.AppToolBar.Decoration.System
 
     height: appBarHeight + (titleBar.visible ? titleBar.height : 0)
 
@@ -85,6 +94,77 @@ ToolBar {
             rightSidebarStack.replace(emptyRightSidebar);
     }
 
+    states: [
+        State {
+            name: "system"
+            when: !titleBar.visible && !windowControls.visible
+
+            AnchorChanges {
+                target: stack
+                anchors.left: parent.left
+                anchors.right: page && page.rightSidebar ? rightSidebarStack.left : parent.right
+            }
+            AnchorChanges {
+                target: rightSidebarStack
+                anchors.right: parent.right
+            }
+            PropertyChanges {
+                target: stack
+                anchors.rightMargin: 0
+            }
+            PropertyChanges {
+                target: rightSidebarStack
+                anchors.rightMargin: page && page.rightSidebar ? page.rightSidebar.anchors.rightMargin : 0
+            }
+        },
+        State {
+            name: "titleBar"
+            when: titleBar.visible && !windowControls.visible
+
+            AnchorChanges {
+                target: stack
+                anchors.left: parent.left
+                anchors.top: titleBar.bottom
+                anchors.right: page && page.rightSidebar ? rightSidebarStack.left : parent.right
+            }
+            AnchorChanges {
+                target: rightSidebarStack
+                anchors.top: titleBar.bottom
+                anchors.right: parent.right
+            }
+            PropertyChanges {
+                target: stack
+                anchors.rightMargin: 0
+            }
+            PropertyChanges {
+                target: rightSidebarStack
+                anchors.rightMargin: page && page.rightSidebar ? page.rightSidebar.anchors.rightMargin : 0
+            }
+        },
+        State {
+            name: "headerBar"
+            when: !titleBar.visible && windowControls.visible
+
+            AnchorChanges {
+                target: stack
+                anchors.left: parent.left
+                anchors.right: page && page.rightSidebar ? rightSidebarStack.left : windowControlsVisible ? windowControls.left : parent.right
+            }
+            AnchorChanges {
+                target: rightSidebarStack
+                anchors.right: windowControlsVisible ? windowControls.left : parent.right
+            }
+            PropertyChanges {
+                target: stack
+                anchors.rightMargin: 0
+            }
+            PropertyChanges {
+                target: rightSidebarStack
+                anchors.rightMargin: page && page.rightSidebar ? page.rightSidebar.anchors.rightMargin : 0
+            }
+        }
+    ]
+
     FluidControlsPrivate.TitleBar {
         id: titleBar
 
@@ -95,15 +175,42 @@ ToolBar {
         Material.background: window.active ? window.decorationColor : Material.color(Material.Grey)
 
         title: window.title
+
+        //visible: toolbar.decorationType === Decoration.TitleBar
+        visible: false
+
+        onMinimizeRequested: window.showMinimized()
+        onMaximizeRequested: {
+            if (window.visibility === Window.Maximized)
+                window.showNormal();
+            else
+                window.showMaximized();
+        }
+        onCloseRequested: window.close()
+    }
+
+    FluidControlsPrivate.WindowControls {
+        id: windowControls
+
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.rightMargin: 8
+
+        //visible: toolbar.decorationType === Decoration.HeaderBar
+        visible: false
+
+        onMinimizeRequested: window.showMinimized()
+        onMaximizeRequested: {
+            if (window.visibility === Window.Maximized)
+                window.showNormal();
+            else
+                window.showMaximized();
+        }
+        onCloseRequested: window.close()
     }
 
     StackView {
         id: stack
-
-        anchors.left: parent.left
-        anchors.top: titleBar.bottom
-        anchors.right: page && page.rightSidebar ? rightSidebarStack.left : parent.right
-        anchors.rightMargin: 0
 
         height: appBarHeight
 
@@ -132,10 +239,6 @@ ToolBar {
 
     StackView {
         id: rightSidebarStack
-
-        anchors.top: titleBar.bottom
-        anchors.right: parent.right
-        anchors.rightMargin: page && page.rightSidebar ? page.rightSidebar.anchors.rightMargin : 0
 
         width: page && page.rightSidebar ? page.rightSidebar.width : 0
         height: appBarHeight
