@@ -18,6 +18,8 @@ INCLUDEPATH += $$PWD
 CONFIG += no_cxx_module
 load(qml_plugin)
 
+RESOURCES += window-controls.qrc
+
 contains(CONFIG, fluid_resource_icons) {
     DEFINES += FLUID_INSTALL_ICONS=0
     RESOURCES += icons.qrc

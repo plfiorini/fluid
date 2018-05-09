@@ -111,6 +111,8 @@ void WindowDecoration::updateDecorationColor()
     if (m_color == Qt::transparent)
         return;
 
+    qputenv("QT_WAYLAND_DISABLE_WINDOWDECORATION", QByteArrayLiteral("1"));
+
     QPlatformWindow *platformWindow = m_window->handle();
     if (!platformWindow)
         return;

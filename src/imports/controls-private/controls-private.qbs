@@ -6,6 +6,7 @@ LiriQmlPlugin {
     pluginPath: "Fluid/Controls/Private"
 
     Depends { name: "Qt.quickcontrols2"; versionAtLeast: project.minimumQtVersion }
+    Depends { name: "Qt.gui-private" }
     Depends { name: "Android.ndk"; condition: qbs.targetOS.contains("android") }
 
     Properties {

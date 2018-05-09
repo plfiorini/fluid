@@ -34,9 +34,9 @@ LiriQmlPlugin {
     Group {
         name: "Sources"
         files: {
-            var sources = ["*.cpp", "*.h"];
+            var sources = ["*.cpp", "*.h", "window-controls.qrc"];
             if (!project.installIcons)
-                sources.concat(["*.qrc"]);
+                sources.concat(["icons.qrc"]);
             return sources;
         }
     }

@@ -1,6 +1,7 @@
 /*
  * This file is part of Fluid.
  *
+ * Copyright (C) 2018 Pier Luigi Fiorini <pierluigi.fiorini@gmail.com>
  * Copyright (C) 2018 Michael Spencer <sonrisesoftware@gmail.com>
  *
  * $BEGIN_LICENSE:MPL2$
@@ -16,6 +17,7 @@ import QtQuick 2.10
 import QtQuick.Controls 2.3
 import QtQuick.Controls.Material 2.3
 import Fluid.Controls 1.1 as FluidControls
+import Fluid.Controls.Private 1.0 as FluidControlsPrivate
 
 ToolBar {
     id: toolbar
@@ -42,7 +44,7 @@ ToolBar {
         return height;
     }
 
-    height: appBarHeight
+    height: appBarHeight + (titleBar.visible ? titleBar.height : 0)
 
     Behavior on height {
         NumberAnimation { duration: FluidControls.Units.mediumDuration }
@@ -83,10 +85,23 @@ ToolBar {
             rightSidebarStack.replace(emptyRightSidebar);
     }
 
+    FluidControlsPrivate.TitleBar {
+        id: titleBar
+
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.right: parent.right
+
+        Material.background: window.active ? window.decorationColor : Material.color(Material.Grey)
+
+        title: window.title
+    }
+
     StackView {
         id: stack
 
         anchors.left: parent.left
+        anchors.top: titleBar.bottom
         anchors.right: page && page.rightSidebar ? rightSidebarStack.left : parent.right
         anchors.rightMargin: 0
 
@@ -97,7 +112,7 @@ ToolBar {
         }
 
         popEnter: Transition {
-            NumberAnimation { property: "y"; from: 0.5 *  -stack.height; to: 0; duration: 250; easing.type: Easing.OutCubic }
+            NumberAnimation { property: "y"; from: 0.5 * -stack.height; to: 0; duration: 250; easing.type: Easing.OutCubic }
             NumberAnimation { property: "opacity"; from: 0.0; to: 1.0; duration: 250; easing.type: Easing.OutCubic }
         }
         popExit: Transition {
@@ -118,6 +133,7 @@ ToolBar {
     StackView {
         id: rightSidebarStack
 
+        anchors.top: titleBar.bottom
         anchors.right: parent.right
         anchors.rightMargin: page && page.rightSidebar ? page.rightSidebar.anchors.rightMargin : 0
 
